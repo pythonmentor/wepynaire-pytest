@@ -119,6 +119,32 @@ def test_send_hello_sends_hello_message_without_monkeypatch(capsys):
     exemple.send_email = send_email_backup
 
 
+def test_send_hello_sends_hello_message_using_pytest_mock(mocker):
+    """Vérifie que send_hello envoie l'email 'hello, world'.
+
+    Ce test est un duplicat du test précédent, mais utilise la bibliothèque
+    unittest.mock, faisant partie de la bibliothèque standard de python, pour
+    créer le faux de send_email. unittest.mock est utilisé ici via son plugin
+    d'intégration à pytest, python-mock. Ce plugin utilise une fixture appelée
+    mocker.
+
+    """
+    # 1. setup
+
+    # unittest.mock, via la fixture mocker, simplifie la création de mocks
+    fake_send_email = mocker.patch('webinaire.exemple.send_email')
+
+    # 2. Exécution de la fonction
+    exemple.send_hello()
+
+    # 3. vérifier que le résultat est conforme
+    fake_send_email.assert_called_with(
+        subject='Salutations',
+        message='hello, world',
+        recipients=['moi@moi.com'],
+    )
+
+
 def test_read_labyrinth_returns_empty_list_if_file_does_not_exist():
     """Vérifie que read_labyrinth() retourne une liste vide lorsque
     le chemin reçu en argument ne correspond à aucun fichier existant."""
